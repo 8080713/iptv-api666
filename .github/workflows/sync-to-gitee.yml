@@ -1,0 +1,51 @@
+name: Sync to Gitee
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'output/result.txt'
+      - 'output/result.m3u'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Checkout Gitee code
+        uses: actions/checkout@v3
+        with:
+          repository: q8080713/iptv-api
+          token: ${{ secrets.GITEE_TOKEN }}
+          path: gitee_repo
+          
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+      - name: Sync result files to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          cd gitee_repo
+          
+          # 创建 iptv-api666 目录（如果不存在）
+          mkdir -p iptv-api666
+          
+          # 复制 result.txt 和 result.m3u 到 iptv-api666 目录
+          cp ../output/result.txt iptv-api666/result.txt
+          cp ../output/result.m3u iptv-api666/result.m3u
+          
+          # 添加并提交更改
+          git add iptv-api666/result.txt iptv-api666/result.m3u
+          git diff --cached --quiet || git commit -m "🔄 自动更新 IPTV 源文件"
+          
+          # 推送到 Gitee
+          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/iptv-api.git
+          git push origin main
