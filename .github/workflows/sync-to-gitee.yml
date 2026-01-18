@@ -27,10 +27,6 @@ jobs:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           git clone https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git gitee_repo
-          cd gitee_repo
-          
-          # 设置 remote URL（确保使用 token）
-          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git
           
       - name: Sync result files to Gitee
         env:
@@ -49,5 +45,5 @@ jobs:
           git add iptv-api666/result.txt iptv-api666/result.m3u
           git diff --cached --quiet || git commit -m "🔄 自动更新 IPTV 源文件"
           
-          # 推送到 Gitee（Gitee 默认分支是 master）
-          git push origin master
+          # 推送到 Gitee（直接使用完整 URL）
+          git push https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git master
