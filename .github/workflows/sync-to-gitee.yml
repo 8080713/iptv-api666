@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Gitee code
         uses: actions/checkout@v3
         with:
-          repository: q8080713/iptv-api
+          repository: q8080713/tv
           token: ${{ secrets.GITEE_TOKEN }}
           path: gitee_repo
           
@@ -47,5 +47,5 @@ jobs:
           git diff --cached --quiet || git commit -m "🔄 自动更新 IPTV 源文件"
           
           # 推送到 Gitee
-          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/iptv-api.git
+          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git
           git push origin main
