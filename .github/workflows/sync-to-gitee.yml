@@ -17,17 +17,16 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Checkout Gitee code
-        uses: actions/checkout@v3
-        with:
-          repository: q8080713/tv
-          token: ${{ secrets.GITEE_TOKEN }}
-          path: gitee_repo
-          
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+      - name: Clone Gitee repository
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          git clone https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git gitee_repo
           
       - name: Sync result files to Gitee
         env:
@@ -47,5 +46,4 @@ jobs:
           git diff --cached --quiet || git commit -m "🔄 自动更新 IPTV 源文件"
           
           # 推送到 Gitee
-          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git
           git push origin main
