@@ -47,12 +47,12 @@ jobs:
             rm -f updates/multicast/cache.pkl
           fi
           
-          # 清理 output/ 目录下超过7天的旧结果文件（如果存在）
+          # 清理 output/ 目录下超过3天的旧结果文件（如果存在）
           if [ -d "output" ]; then
-            echo "清理 output/ 目录下超过7天的旧文件..."
-            find output -type f -name "*.txt" -mtime +7 -delete 2>/dev/null || true
-            find output -type f -name "*.m3u" -mtime +7 -delete 2>/dev/null || true
-            find output -type f -name "*.json" -mtime +7 -delete 2>/dev/null || true
+            echo "清理 output/ 目录下超过3天的旧文件..."
+            find output -type f -name "*.txt" -mtime +3 -delete 2>/dev/null || true
+            find output -type f -name "*.m3u" -mtime +3 -delete 2>/dev/null || true
+            find output -type f -name "*.json" -mtime +3 -delete 2>/dev/null || true
           fi
           
           # 清理 Python 缓存文件
