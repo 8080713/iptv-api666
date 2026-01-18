@@ -27,6 +27,10 @@ jobs:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           git clone https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git gitee_repo
+          cd gitee_repo
+          
+          # 设置 remote URL（确保使用 token）
+          git remote set-url origin https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git
           
       - name: Sync result files to Gitee
         env:
