@@ -45,5 +45,9 @@ jobs:
           git add iptv-api666/result.txt iptv-api666/result.m3u
           git diff --cached --quiet || git commit -m "🔄 自动更新 IPTV 源文件"
           
-          # 推送到 Gitee（直接使用完整 URL）
-          git push https://${GITEE_TOKEN}@gitee.com/q8080713/tv.git master
+          # 配置 Git credential helper
+          git config --global credential.helper store
+          echo "https://${GITEE_TOKEN}@gitee.com" > ~/.git-credentials
+          
+          # 推送到 Gitee
+          git push https://gitee.com/q8080713/tv.git master
