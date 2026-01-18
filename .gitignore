@@ -35,6 +35,7 @@ ENV/
 output/
 *.log
 cache/
+*.pkl
 
 result_new.log
 updates/multicast/multicast_region_result.json

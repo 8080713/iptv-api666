@@ -1,0 +1,72 @@
+name: Cleanup Invalid Old Files
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 每天北京时间 11:00 运行（UTC时间3点）
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Cleanup old cache files
+        run: |
+          echo "清理旧的缓存文件..."
+          
+          # 清理 updates/fofa/ 目录下的 .pkl 缓存文件
+          if [ -f "updates/fofa/fofa_hotel_region_result.pkl" ]; then
+            echo "删除 fofa_hotel_region_result.pkl"
+            rm -f updates/fofa/fofa_hotel_region_result.pkl
+          fi
+          
+          if [ -f "updates/fofa/fofa_multicast_region_result.pkl" ]; then
+            echo "删除 fofa_multicast_region_result.pkl"
+            rm -f updates/fofa/fofa_multicast_region_result.pkl
+          fi
+          
+          # 清理 updates/hotel/ 目录下的缓存文件
+          if [ -f "updates/hotel/cache.pkl" ]; then
+            echo "删除 hotel/cache.pkl"
+            rm -f updates/hotel/cache.pkl
+          fi
+          
+          # 清理 updates/multicast/ 目录下的缓存文件
+          if [ -f "updates/multicast/cache.pkl" ]; then
+            echo "删除 multicast/cache.pkl"
+            rm -f updates/multicast/cache.pkl
+          fi
+          
+          # 清理 output/ 目录下超过7天的旧结果文件（如果存在）
+          if [ -d "output" ]; then
+            echo "清理 output/ 目录下超过7天的旧文件..."
+            find output -type f -name "*.txt" -mtime +7 -delete 2>/dev/null || true
+            find output -type f -name "*.m3u" -mtime +7 -delete 2>/dev/null || true
+            find output -type f -name "*.json" -mtime +7 -delete 2>/dev/null || true
+          fi
+          
+          # 清理 Python 缓存文件
+          echo "清理 Python 缓存文件..."
+          find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find . -type f -name "*.pyc" -delete 2>/dev/null || true
+          find . -type f -name "*.pyo" -delete 2>/dev/null || true
+          
+          echo "清理完成！"
+          
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "🧹 清理无效老文件" || echo "No changes to commit"
+          git push origin main
